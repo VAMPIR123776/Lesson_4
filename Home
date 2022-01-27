@@ -1,0 +1,146 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+    final static int LENGTH = 3; // Размер игрового поля
+    final static char DOT_EMPTY = '.';
+    final static char DOT_X = 'X';
+    final static char DOT_0 = '0';
+    final static Scanner scanner = new Scanner(System.in);
+    final static Random random = new Random();
+    static String result;
+
+    final static char [][] map = new char[LENGTH][LENGTH];
+
+
+    public static void main(String[] args){
+
+
+        initMap();
+        printMap();
+
+        while (true) {
+            turnHuman();
+            printMap();
+
+
+            if (checkMap()) {
+                result = " НИЧЬЯ";
+                break;
+            }
+
+            if(checkWin(DOT_X)){
+                result = " ВЫ ПОБЕДИЛИ";
+                break;
+            }
+
+            turnComputer();
+            printMap();
+
+            if (checkMap()) {
+                result = " НИЧЬЯ";
+                break;
+            }
+
+            if(checkWin(DOT_0)){
+                result = " ПОБЕДИЛ КОМПЬЮТЕР";
+                break;
+            }
+        }
+        System.out.println("ИГРА ЗАКОНЧЕНА. Результат" + result);
+    }
+
+    private static boolean checkWin(char field) {
+        int horizontal, vertical, diagonal1, diagonal2;
+        for (int i = 0; i < LENGTH; i++) {
+            horizontal = 0; vertical = 0;
+            for (int j = 0; j < LENGTH; j++) {
+                if (map[i][j] == field) {
+                    horizontal++;
+                }
+                if (map[j][i] == field) {
+                    vertical++;
+                }
+            }
+                if (horizontal == LENGTH || vertical == LENGTH){
+                    return true;
+                }
+            }
+        diagonal1 = 0; diagonal2 = 0;
+        for (int i = 0; i < LENGTH; i++) {
+            if (map[i][i] == field) {
+                diagonal1++;
+            }
+            if (map[i][LENGTH - i - 1] == field) {
+                diagonal2++;
+            }
+        }
+        if (diagonal1 == LENGTH || diagonal2 == LENGTH) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean checkMap() {
+        for (int i = 0; i < LENGTH; i++) {
+            for (int j = 0; j < LENGTH; j++) {
+                if (map[i][j] == DOT_EMPTY) return false;
+            }
+        }
+        return true;
+    }
+
+    private static void turnComputer() {
+        int x;
+        int y;
+        do {
+            x = random.nextInt(LENGTH);
+            y = random.nextInt(LENGTH);
+        } while (isNotValid(x, y));
+        System.out.println("Компьютер поставил нолик в поле с кординатами:" + (y + 1) + " " + (x + 1));
+
+        map[x][y] = DOT_0;
+    }
+
+    private static void turnHuman() {
+        int x;
+        int y;
+        do {
+            System.out.println("Введите кординаты X и Y");
+            y = scanner.nextInt() - 1;
+            x = scanner.nextInt() - 1;
+        }while (isNotValid(x, y));
+
+        map[x][y] = DOT_X;
+    }
+
+    private static boolean isNotValid(int x, int y) {
+        if (x < 0 || x >= LENGTH || y < 0 || y >= LENGTH) return true;
+        if (map[x][y] == DOT_X || map[x][y] == DOT_0) return true;
+        return false;
+    }
+
+    private static void printMap() {
+        for (int i = 0; i <= LENGTH; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        for (int i = 0; i < LENGTH; i++) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < LENGTH; j++) {
+                System.out.print(map[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private static void initMap() {
+        for (int i = 0; i < LENGTH; i++) {
+            for (int j = 0; j < LENGTH; j++) {
+                map[i][j] = DOT_EMPTY;
+            }
+
+        }
+    }
+}
